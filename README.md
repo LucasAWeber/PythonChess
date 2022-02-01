@@ -1,4 +1,4 @@
-# ShockingRotom May, 2021
+# Lucas Weber May, 2021
 ## PythonChess
 ###### Game of chess written in python
 
