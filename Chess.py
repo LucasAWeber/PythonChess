@@ -178,17 +178,59 @@ def mouse_highlight(screen, size, board, selected, p_selected, turn):
     draw_library.draw_highlight(screen, size, pos, colour)
 
 
-# Valid spaces (adds 50 to all the negative numbers that the selected piece can move to)
-def valid_spaces(board, og_board, selected, row, column):
-    # Variables to track whether the piece can move further in that direction or if its stopped by a different piece
-    up = True
-    down = True
-    left = True
-    right = True
+# Bishops valid move spaces algo
+def bishop_moves(board, s_row, s_col, row, column):
     pospos = True
     posneg = True
     negpos = True
     negneg = True
+    for i in range(1, column):
+        if 0 <= s_row + i < row and 0 <= s_col + i < column and pospos:
+            board[s_row + i][s_col + i] += 50
+            if board[s_row + i][s_col + i] != 0:
+                pospos = False
+        if 0 <= s_row - i < row and 0 <= s_col - i < column and negneg:
+            board[s_row - i][s_col - i] += 50
+            if board[s_row - i][s_col - i] != 0:
+                negneg = False
+        if 0 <= s_row + i < row and 0 <= s_col - i < column and posneg:
+            board[s_row + i][s_col - i] += 50
+            if board[s_row + i][s_col - i] != 0:
+                posneg = False
+        if 0 <= s_row - i < row and 0 <= s_col + i < column and negpos:
+            board[s_row - i][s_col + i] += 50
+            if board[s_row - i][s_col + i] != 0:
+                negpos = False
+    return board
+
+# Rooks valid move spaces algo
+def rook_moves(board, s_row, s_col, row, column):
+    up = True
+    down = True
+    left = True
+    right = True
+    for i in range(1, column):
+        if 0 <= s_row + i < row and up:
+            board[s_row + i][s_col] += 50
+            if board[s_row + i][s_col] != 0:
+                up = False
+        if 0 <= s_row - i < row and down:
+            board[s_row - i][s_col] += 50
+            if board[s_row - i][s_col] != 0:
+                down = False
+        if 0 <= s_col - i < column and left:
+            board[s_row][s_col - i] += 50
+            if board[s_row][s_col - i] != 0:
+                left = False
+        if 0 <= s_col + i < column and right:
+            board[s_row][s_col + i] += 50
+            if board[s_row][s_col + i] != 0:
+                right = False
+    return board
+
+
+# Valid spaces (adds 50 to all the negative numbers that the selected piece can move to)
+def valid_spaces(board, og_board, selected, row, column):
     s_row = selected[0]
     s_col = selected[1]
     selected_value = board[s_row][s_col] + 50
@@ -201,7 +243,7 @@ def valid_spaces(board, og_board, selected, row, column):
     # If its a pawn
     if selected_value == 1:
         board[s_row][s_col] += 50
-        if board[s_row][s_col] >= 20:
+        if board[s_row][s_col] >= 20 and s_row - 1 >= 0:
             if board[s_row - 1][s_col] + 50 == 0:
                 board[s_row - 1][s_col] += 50
                 if og_board[s_row][s_col] == board[s_row][s_col] and board[s_row][s_col] >= 20 and \
@@ -211,7 +253,7 @@ def valid_spaces(board, og_board, selected, row, column):
                 board[s_row - 1][s_col - 1] += 50
             if s_row - 1 >= 0 and s_col + 1 < column and board[s_row - 1][s_col + 1] + 50 != 0:
                 board[s_row - 1][s_col + 1] += 50
-        elif board[s_row][s_col] >= 10:
+        elif board[s_row][s_col] >= 10 and s_row + 1 < ROWCOUNT:
             if board[s_row + 1][s_col] + 50 == 0:
                 board[s_row + 1][s_col] += 50
                 if og_board[s_row][s_col] == board[s_row][s_col] and board[s_row][s_col] >= 10 and \
@@ -223,26 +265,7 @@ def valid_spaces(board, og_board, selected, row, column):
                 board[s_row + 1][s_col + 1] += 50
     # Elif its a rook
     elif selected_value == 2:
-        for i in range(1, column):
-            if 0 <= s_row + i < row and up:
-                board[s_row + i][s_col] += 50
-                if board[s_row + i][s_col] != 0:
-                    up = False
-        for i in range(1, column):
-            if 0 <= s_row - i < row and down:
-                board[s_row - i][s_col] += 50
-                if board[s_row - i][s_col] != 0:
-                    down = False
-        for i in range(1, column):
-            if 0 <= s_col - i < column and left:
-                board[s_row][s_col - i] += 50
-                if board[s_row][s_col - i] != 0:
-                    left = False
-        for i in range(1, column):
-            if 0 <= s_col + i < column and right:
-                board[s_row][s_col + i] += 50
-                if board[s_row][s_col + i] != 0:
-                    right = False
+        board = rook_moves(board, s_row, s_col, row, column)
         board[s_row][s_col] += 50
     # Elif its a knight
     elif selected_value == 3:
@@ -265,69 +288,12 @@ def valid_spaces(board, og_board, selected, row, column):
         board[s_row][s_col] += 50
     # Elif its a bishop
     elif selected_value == 4:
-        for i in range(1, column):
-            if 0 <= s_row + i < row and 0 <= s_col + i < column and pospos:
-                board[s_row + i][s_col + i] += 50
-                if board[s_row + i][s_col + i] != 0:
-                    pospos = False
-        for i in range(1, column):
-            if 0 <= s_row - i < row and 0 <= s_col - i < column and negneg:
-                board[s_row - i][s_col - i] += 50
-                if board[s_row - i][s_col - i] != 0:
-                    negneg = False
-        for i in range(1, column):
-            if 0 <= s_row + i < row and 0 <= s_col - i < column and posneg:
-                board[s_row + i][s_col - i] += 50
-                if board[s_row + i][s_col - i] != 0:
-                    posneg = False
-        for i in range(1, column):
-            if 0 <= s_row - i < row and 0 <= s_col + i < column and negpos:
-                board[s_row - i][s_col + i] += 50
-                if board[s_row - i][s_col + i] != 0:
-                    negpos = False
+        board = bishop_moves(board, s_row, s_col, row, column)
         board[s_row][s_col] += 50
     # Elif its a queen
     elif selected_value == 5:
-        for i in range(1, column):
-            if 0 <= s_row + i < row and 0 <= s_col + i < column and pospos:
-                board[s_row + i][s_col + i] += 50
-                if board[s_row + i][s_col + i] != 0:
-                    pospos = False
-        for i in range(1, column):
-            if 0 <= s_row - i < row and 0 <= s_col - i < column and negneg:
-                board[s_row - i][s_col - i] += 50
-                if board[s_row - i][s_col - i] != 0:
-                    negneg = False
-        for i in range(1, column):
-            if 0 <= s_row + i < row and 0 <= s_col - i < column and posneg:
-                board[s_row + i][s_col - i] += 50
-                if board[s_row + i][s_col - i] != 0:
-                    posneg = False
-        for i in range(1, column):
-            if 0 <= s_row - i < row and 0 <= s_col + i < column and negpos:
-                board[s_row - i][s_col + i] += 50
-                if board[s_row - i][s_col + i] != 0:
-                    negpos = False
-        for i in range(1, column):
-            if 0 <= s_row + i < row and up:
-                board[s_row + i][s_col] += 50
-                if board[s_row + i][s_col] != 0:
-                    up = False
-        for i in range(1, column):
-            if 0 <= s_row - i < row and down:
-                board[s_row - i][s_col] += 50
-                if board[s_row - i][s_col] != 0:
-                    down = False
-        for i in range(1, column):
-            if 0 <= s_col - i < column and left:
-                board[s_row][s_col - i] += 50
-                if board[s_row][s_col - i] != 0:
-                    left = False
-        for i in range(1, column):
-            if 0 <= s_col + i < column and right:
-                board[s_row][s_col + i] += 50
-                if board[s_row][s_col + i] != 0:
-                    right = False
+        board = rook_moves(board, s_row, s_col, row, column)
+        board = bishop_moves(board, s_row, s_col, row, column)
         board[s_row][s_col] += 50
     # Elif its a king
     elif selected_value == 6:
