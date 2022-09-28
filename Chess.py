@@ -269,22 +269,10 @@ def valid_spaces(board, og_board, selected, row, column):
         board[s_row][s_col] += 50
     # Elif its a knight
     elif selected_value == 3:
-        if s_row + 2 < row and s_col + 1 < column:
-            board[s_row + 2][s_col + 1] += 50
-        if s_row + 2 < row and s_col - 1 >= 0:
-            board[s_row + 2][s_col - 1] += 50
-        if s_row + 1 < row and s_col + 2 < column:
-            board[s_row + 1][s_col + 2] += 50
-        if s_row + 1 < row and s_col - 2 >= 0:
-            board[s_row + 1][s_col - 2] += 50
-        if s_row - 2 >= 0 and s_col + 1 < column:
-            board[s_row - 2][s_col + 1] += 50
-        if s_row - 2 >= 0 and s_col - 1 >= 0:
-            board[s_row - 2][s_col - 1] += 50
-        if s_row - 1 >= 0 and s_col + 2 < column:
-            board[s_row - 1][s_col + 2] += 50
-        if s_row - 1 >= 0 and s_col - 2 >= 0:
-            board[s_row - 1][s_col - 2] += 50
+        knight_moves = [[2,1],[2,-1],[1,2],[1,-2],[-2,1],[-2,-1],[-1,2],[-1,-2]]
+        for i in range(8):
+            if 0 <= s_row + knight_moves[i][0] < row and 0 <= s_col + knight_moves[i][1] < column:
+                board[s_row + knight_moves[i][0]][s_col + knight_moves[i][1]] += 50
         board[s_row][s_col] += 50
     # Elif its a bishop
     elif selected_value == 4:
@@ -297,22 +285,10 @@ def valid_spaces(board, og_board, selected, row, column):
         board[s_row][s_col] += 50
     # Elif its a king
     elif selected_value == 6:
-        if 0 <= s_row + 1 < row and 0 <= s_col + 1 < column:
-            board[s_row + 1][s_col + 1] += 50
-        if 0 <= s_row - 1 < row and 0 <= s_col - 1 < column:
-            board[s_row - 1][s_col - 1] += 50
-        if 0 <= s_row + 1 < row and 0 <= s_col - 1 < column:
-            board[s_row + 1][s_col - 1] += 50
-        if 0 <= s_row - 1 < row and 0 <= s_col + 1 < column:
-            board[s_row - 1][s_col + 1] += 50
-        if 0 <= s_row + 1 < row:
-            board[s_row + 1][s_col] += 50
-        if 0 <= s_row - 1 < row:
-            board[s_row - 1][s_col] += 50
-        if 0 <= s_col + 1 < column:
-            board[s_row][s_col + 1] += 50
-        if 0 <= s_col - 1 < column:
-            board[s_row][s_col - 1] += 50
+        king_moves = [[1,1],[-1,-1],[1,-1],[-1,1],[1,0],[-1,0],[0,1],[0,-1]]
+        for i in range(8):
+            if 0 <= s_row + king_moves[i][0] < row and 0 <= s_col + king_moves[i][1] < column:
+                board[s_row + king_moves[i][0]][s_col + king_moves[i][1]] += 50
         board[s_row][s_col] += 50
     return board
 
