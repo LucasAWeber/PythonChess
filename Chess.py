@@ -1,6 +1,7 @@
 # Chess
-# May, 2021
-# ShockingRotom
+# 2021
+# Updated in 2022
+# Lucas Weber
 
 # game of chess starting with white
 # doesnt include advanced moves such as castling
