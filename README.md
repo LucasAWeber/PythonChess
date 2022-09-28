@@ -1,4 +1,4 @@
-# Lucas Weber May, 2021
+# Lucas Weber 2022
 ## PythonChess
 ###### Game of chess written in Python
 
